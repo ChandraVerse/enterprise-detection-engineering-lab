@@ -1,0 +1,49 @@
+{
+  "name": "Enterprise Detection Engineering Lab Coverage",
+  "versions": {
+    "attack": "14",
+    "navigator": "4.9.1",
+    "layer": "4.5"
+  },
+  "domain": "enterprise-attack",
+  "description": "MITRE ATT&CK coverage layer for Enterprise Detection Engineering Lab. Author: Chandra Sekhar Chakraborty",
+  "filters": {
+    "platforms": ["Windows"]
+  },
+  "sorting": 0,
+  "layout": {
+    "layout": "side",
+    "aggregateFunction": "average",
+    "showID": true,
+    "showName": true
+  },
+  "hideDisabled": false,
+  "techniques": [
+    { "techniqueID": "T1003.001", "tactic": "credential-access",   "score": 100, "color": "#ff6666", "comment": "Detected via Sysmon Event 10 - LSASS process access", "enabled": true, "showSubtechniques": true },
+    { "techniqueID": "T1027.010", "tactic": "defense-evasion",     "score": 100, "color": "#ff6666", "comment": "Detected via PowerShell command-line analysis", "enabled": true, "showSubtechniques": true },
+    { "techniqueID": "T1021.002", "tactic": "lateral-movement",    "score": 100, "color": "#ff6666", "comment": "Detected via PSEXESVC service creation", "enabled": true, "showSubtechniques": true },
+    { "techniqueID": "T1047",     "tactic": "execution",            "score": 100, "color": "#ff6666", "comment": "Detected via WMI child process spawning", "enabled": true },
+    { "techniqueID": "T1053.005", "tactic": "persistence",          "score": 100, "color": "#ff6666", "comment": "Detected via schtasks.exe command-line", "enabled": true, "showSubtechniques": true },
+    { "techniqueID": "T1547.001", "tactic": "persistence",          "score": 100, "color": "#ff6666", "comment": "Detected via Sysmon registry modification events", "enabled": true, "showSubtechniques": true },
+    { "techniqueID": "T1087.001", "tactic": "discovery",            "score": 100, "color": "#ffaa44", "comment": "Detected via net.exe command enumeration", "enabled": true, "showSubtechniques": true },
+    { "techniqueID": "T1550.002", "tactic": "lateral-movement",     "score": 100, "color": "#ff6666", "comment": "Detected via NTLM Type 3 logon patterns", "enabled": true, "showSubtechniques": true },
+    { "techniqueID": "T1140",     "tactic": "defense-evasion",      "score": 100, "color": "#ff6666", "comment": "Detected via encoded command-line parameters", "enabled": true },
+    { "techniqueID": "T1218",     "tactic": "defense-evasion",      "score": 100, "color": "#ff6666", "comment": "Detected via certutil.exe LOLBAS abuse", "enabled": true }
+  ],
+  "gradient": {
+    "colors": ["#ffffff", "#ff6666"],
+    "minValue": 0,
+    "maxValue": 100
+  },
+  "legendItems": [
+    { "label": "Validated Detection", "color": "#ff6666" },
+    { "label": "Partial Detection",   "color": "#ffaa44" }
+  ],
+  "metadata": [],
+  "links": [],
+  "showTacticRowBackground": true,
+  "tacticRowBackground": "#dddddd",
+  "selectTechniquesAcrossTactics": true,
+  "selectSubtechniquesWithParent": false,
+  "selectVisibleTechniques": false
+}
