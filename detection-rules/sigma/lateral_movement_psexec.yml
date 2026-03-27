@@ -1,0 +1,37 @@
+title: PsExec Lateral Movement via Network Share
+id: c9e4f3b2-5a1d-4f8e-8b2c-3d9a7c4f1e6b
+status: production
+description: |
+  Detects lateral movement activity using PsExec or compatible tools creating
+  the PSEXESVC service on a remote host. Covers both direct PsExec usage and
+  Impacket's psexec.py implementation commonly used by adversaries.
+references:
+  - https://attack.mitre.org/techniques/T1021/002/
+  - https://docs.microsoft.com/en-us/sysinternals/downloads/psexec
+author: Chandra Sekhar Chakraborty
+date: 2025/11/10
+modified: 2026/01/15
+tags:
+  - attack.lateral_movement
+  - attack.t1021.002
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    - Image|contains: 'PSEXESVC'
+    - CommandLine|contains:
+        - 'psexec'
+        - 'PSEXESVC'
+  selection_service:
+    EventID: 7045
+    ServiceName: 'PSEXESVC'
+  condition: selection or selection_service
+falsepositives:
+  - Legitimate administrative use of PsExec by IT operations teams
+level: high
+fields:
+  - Image
+  - CommandLine
+  - ParentImage
+  - TargetHostname

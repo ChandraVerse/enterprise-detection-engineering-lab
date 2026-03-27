@@ -1,0 +1,38 @@
+title: Pass-the-Hash Attack via NTLM Authentication
+id: b5d9e8a7-0f6c-4e3d-1a7b-8c2f5e9d6b3a
+status: production
+description: |
+  Detects Pass-the-Hash attacks by identifying suspicious NTLM authentication
+  patterns where a process accesses local credentials and subsequently creates
+  network logon sessions. Commonly seen with Mimikatz sekurlsa::pth and
+  Impacket's smbclient with NTLM hash authentication.
+references:
+  - https://attack.mitre.org/techniques/T1550/002/
+author: Chandra Sekhar Chakraborty
+date: 2025/11/20
+modified: 2026/01/15
+tags:
+  - attack.lateral_movement
+  - attack.t1550.002
+  - attack.credential_access
+logsource:
+  product: windows
+  service: security
+detection:
+  selection:
+    EventID: 4624
+    LogonType: 3
+    AuthenticationPackageName: 'NTLM'
+    WorkstationName: '-'
+  filter_legitimate:
+    SubjectUserName: 'ANONYMOUS LOGON'
+  condition: selection and not filter_legitimate
+falsepositives:
+  - Legitimate NTLM network authentication in mixed environments
+level: high
+fields:
+  - SubjectUserName
+  - TargetUserName
+  - WorkstationName
+  - IpAddress
+  - LogonType

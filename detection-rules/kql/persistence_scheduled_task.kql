@@ -1,0 +1,16 @@
+// Rule: Suspicious Scheduled Task Creation via CLI
+// Tactic: Persistence | Technique: T1053.005
+// Author: Chandra Sekhar Chakraborty
+
+process where event.type == "start" and
+  process.name == "schtasks.exe" and
+  process.command_line like~ "*/create*" and
+  (
+    process.command_line like~ "*\\AppData\\Local\\Temp*" or
+    process.command_line like~ "*\\AppData\\Roaming*" or
+    process.command_line like~ "*\\Users\\Public*" or
+    process.command_line like~ "*powershell*" or
+    process.command_line like~ "*cmd /c*" or
+    process.command_line like~ "*wscript*" or
+    process.command_line like~ "*cscript*"
+  )

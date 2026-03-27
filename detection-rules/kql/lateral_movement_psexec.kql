@@ -1,0 +1,18 @@
+// Rule: PsExec Lateral Movement via Network Share
+// Tactic: Lateral Movement | Technique: T1021.002
+// Author: Chandra Sekhar Chakraborty
+
+(
+  process where event.type == "start" and
+  (
+    process.name like~ "*PSEXESVC*" or
+    process.command_line like~ "*psexec*"
+  )
+) or
+(
+  sequence by host.name
+    [process where event.type == "start" and process.name == "services.exe"]
+    [process where event.type == "start" and
+      process.parent.name == "services.exe" and
+      process.name == "PSEXESVC.exe"]
+)

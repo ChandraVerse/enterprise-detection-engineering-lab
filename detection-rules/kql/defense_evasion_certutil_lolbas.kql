@@ -1,0 +1,15 @@
+// Rule: LOLBAS Abuse via Certutil Download or Decode
+// Tactic: Defense Evasion | Technique: T1218
+// Author: Chandra Sekhar Chakraborty
+
+process where event.type == "start" and
+  process.name == "certutil.exe" and
+  (
+    process.command_line like~ "*-urlcache*" or
+    process.command_line like~ "*-verifyctl*" or
+    process.command_line like~ "*-decode*" or
+    process.command_line like~ "*-decodehex*" or
+    process.command_line like~ "*http://*" or
+    process.command_line like~ "*https://*" or
+    process.command_line like~ "*ftp://*"
+  )

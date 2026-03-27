@@ -1,0 +1,9 @@
+| Comment: Suspicious Scheduled Task Creation | T1053.005 | Author: Chandra Sekhar Chakraborty
+
+index=windows source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+Image="*\\schtasks.exe" CommandLine="*/create*"
+(CommandLine="*\\AppData\\Local\\Temp*" OR CommandLine="*\\AppData\\Roaming*"
+ OR CommandLine="*\\Users\\Public*" OR CommandLine="*powershell*"
+ OR CommandLine="*cmd /c*" OR CommandLine="*wscript*" OR CommandLine="*cscript*")
+| table _time, ComputerName, User, CommandLine, ParentImage
+| sort -_time

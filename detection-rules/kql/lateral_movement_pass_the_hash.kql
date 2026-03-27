@@ -1,0 +1,13 @@
+// Rule: Pass-the-Hash Attack via NTLM Authentication
+// Tactic: Lateral Movement | Technique: T1550.002
+// Author: Chandra Sekhar Chakraborty
+// Note: Based on Windows Security Event ID 4624 (Logon Success)
+
+sequence by host.name with maxspan=5m
+  [authentication where
+    event.code == "4624" and
+    winlog.event_data.LogonType == "3" and
+    winlog.event_data.AuthenticationPackageName == "NTLM" and
+    winlog.event_data.WorkstationName == "-" and
+    not winlog.event_data.SubjectUserName == "ANONYMOUS LOGON"
+  ] with runs=3

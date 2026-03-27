@@ -1,0 +1,16 @@
+| Comment: PowerShell Obfuscated Execution | T1027.010 | Author: Chandra Sekhar Chakraborty
+
+index=windows source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+(Image="*\\powershell.exe" OR Image="*\\pwsh.exe")
+(CommandLine="*-EncodedCommand*" OR CommandLine="*-enc *" OR CommandLine="*iex(*"
+ OR CommandLine="*IEX (*" OR CommandLine="*invoke-expression*"
+ OR CommandLine="*[char]*" OR CommandLine="*FromBase64String*")
+NOT CommandLine="*WindowsUpdate*"
+| eval risk_score=case(
+    match(CommandLine, "-EncodedCommand"), 80,
+    match(CommandLine, "FromBase64String"), 75,
+    match(CommandLine, "iex|IEX"), 70,
+    true(), 60
+  )
+| table _time, ComputerName, User, CommandLine, risk_score
+| sort -risk_score

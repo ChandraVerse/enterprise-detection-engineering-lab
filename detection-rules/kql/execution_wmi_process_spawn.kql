@@ -1,0 +1,10 @@
+// Rule: WMI Spawning Suspicious Child Process
+// Tactic: Execution | Technique: T1047
+// Author: Chandra Sekhar Chakraborty
+
+process where event.type == "start" and
+  process.parent.name in ("wmiprvse.exe", "WmiPrvSE.exe") and
+  process.name in (
+    "cmd.exe", "powershell.exe", "cscript.exe",
+    "wscript.exe", "mshta.exe", "regsvr32.exe", "rundll32.exe"
+  )

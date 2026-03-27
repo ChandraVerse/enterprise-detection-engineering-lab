@@ -1,0 +1,39 @@
+title: Registry Run Key Persistence Modification
+id: f3b7c6e5-8d4a-4c1b-9e5f-6a0d3c7b4f1e
+status: production
+description: |
+  Detects modification of common registry Run/RunOnce keys used for persistence.
+  Adversaries add entries to these keys to automatically execute malware at system
+  startup or user logon.
+references:
+  - https://attack.mitre.org/techniques/T1547/001/
+author: Chandra Sekhar Chakraborty
+date: 2025/11/16
+modified: 2026/01/15
+tags:
+  - attack.persistence
+  - attack.t1547.001
+logsource:
+  product: windows
+  category: registry_set
+detection:
+  selection:
+    TargetObject|contains:
+      - '\SOFTWARE\Microsoft\Windows\CurrentVersion\Run'
+      - '\SOFTWARE\Microsoft\Windows\CurrentVersion\RunOnce'
+      - '\SOFTWARE\WOW6432Node\Microsoft\Windows\CurrentVersion\Run'
+      - '\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon'
+  filter_legitimate:
+    Image|contains:
+      - '\MsMpEng.exe'
+      - '\msiexec.exe'
+      - '\OneDriveSetup.exe'
+  condition: selection and not filter_legitimate
+falsepositives:
+  - Legitimate software installations modifying Run keys
+level: medium
+fields:
+  - TargetObject
+  - Details
+  - Image
+  - User

@@ -1,0 +1,22 @@
+// Rule: Suspicious Encoded Command Execution
+// Tactic: Defense Evasion | Technique: T1140
+// Author: Chandra Sekhar Chakraborty
+
+(
+  process where event.type == "start" and
+  process.name in ("powershell.exe", "pwsh.exe") and
+  (
+    process.command_line like~ "*-EncodedCommand*" or
+    process.command_line like~ "*-EnC *" or
+    process.command_line like~ "*-eNc *" or
+    process.command_line like~ "*-ec *"
+  )
+) or
+(
+  process where event.type == "start" and
+  (
+    process.command_line like~ "*certutil -decode*" or
+    process.command_line like~ "*certutil.exe -decode*" or
+    process.command_line like~ "*FromBase64String*"
+  )
+)

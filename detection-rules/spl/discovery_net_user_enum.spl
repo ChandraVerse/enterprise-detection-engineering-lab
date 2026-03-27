@@ -1,0 +1,9 @@
+| Comment: Account Discovery via Net Commands | T1087.001 | Author: Chandra Sekhar Chakraborty
+
+index=windows source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+(Image="*\\net.exe" OR Image="*\\net1.exe")
+(CommandLine="*user*" OR CommandLine="*group*" OR CommandLine="*localgroup*" OR CommandLine="*accounts*")
+| stats count by ComputerName, User, CommandLine
+| where count >= 3
+| eval severity=if(match(CommandLine, "domain"), "high", "medium")
+| sort -count

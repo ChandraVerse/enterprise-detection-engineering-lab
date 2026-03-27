@@ -1,0 +1,41 @@
+title: WMI Spawning Suspicious Child Process
+id: d1f5a4c3-6b2e-4a9f-7c3d-4e8b1a5f2d9c
+status: production
+description: |
+  Detects WMI (Windows Management Instrumentation) spawning suspicious child
+  processes, a common technique for execution and lateral movement. Adversaries
+  use WMI to execute commands on local and remote systems.
+references:
+  - https://attack.mitre.org/techniques/T1047/
+author: Chandra Sekhar Chakraborty
+date: 2025/11/12
+modified: 2026/01/15
+tags:
+  - attack.execution
+  - attack.t1047
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection:
+    ParentImage|endswith:
+      - '\wmiprvse.exe'
+      - '\WmiPrvSE.exe'
+    Image|endswith:
+      - '\cmd.exe'
+      - '\powershell.exe'
+      - '\cscript.exe'
+      - '\wscript.exe'
+      - '\mshta.exe'
+      - '\regsvr32.exe'
+      - '\rundll32.exe'
+  condition: selection
+falsepositives:
+  - WMI-based monitoring tools
+  - SCCM client operations
+level: high
+fields:
+  - Image
+  - CommandLine
+  - ParentImage
+  - ParentCommandLine

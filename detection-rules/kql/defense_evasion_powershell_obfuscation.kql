@@ -1,0 +1,17 @@
+// Rule: PowerShell Obfuscated Script Execution
+// Tactic: Defense Evasion | Technique: T1027.010
+// Author: Chandra Sekhar Chakraborty
+
+process where event.type == "start" and
+  process.name in ("powershell.exe", "pwsh.exe") and
+  (
+    process.command_line like~ "*-EncodedCommand*" or
+    process.command_line like~ "*-enc *" or
+    process.command_line like~ "*iex(*" or
+    process.command_line like~ "*IEX (*" or
+    process.command_line like~ "*invoke-expression*" or
+    process.command_line like~ "*[char]*" or
+    process.command_line like~ "*FromBase64String*" or
+    process.command_line like~ "*-Join*"
+  ) and
+  not process.command_line like~ "*WindowsUpdate*"

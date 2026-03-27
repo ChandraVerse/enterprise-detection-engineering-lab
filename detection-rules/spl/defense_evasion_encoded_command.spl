@@ -1,0 +1,12 @@
+| Comment: Encoded Command Execution | T1140 | Author: Chandra Sekhar Chakraborty
+
+index=windows source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+(
+  ((Image="*\\powershell.exe" OR Image="*\\pwsh.exe")
+   AND (CommandLine="*-EncodedCommand*" OR CommandLine="*-EnC *" OR CommandLine="*-eNc *" OR CommandLine="*-ec *"))
+  OR
+  (CommandLine="*certutil -decode*" OR CommandLine="*FromBase64String*")
+)
+| rex field=CommandLine "(?i)-enc(?:odedcommand)?\s+(?P<encoded_payload>\S+)"
+| table _time, ComputerName, User, Image, CommandLine, encoded_payload
+| sort -_time

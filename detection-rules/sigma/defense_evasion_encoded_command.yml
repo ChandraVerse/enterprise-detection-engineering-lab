@@ -1,0 +1,42 @@
+title: Suspicious Encoded Command Execution
+id: c6e0f9b8-1a7d-4f4e-2b8c-9d3a6f0e7c4b
+status: production
+description: |
+  Detects execution of commands that have been encoded or packed to evade
+  detection. Covers base64 encoded PowerShell, certutil decode operations,
+  and other common encoding/decoding techniques used during defense evasion.
+references:
+  - https://attack.mitre.org/techniques/T1140/
+author: Chandra Sekhar Chakraborty
+date: 2025/11/22
+modified: 2026/01/15
+tags:
+  - attack.defense_evasion
+  - attack.t1140
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_powershell:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+    CommandLine|contains:
+      - '-EncodedCommand'
+      - '-EnC'
+      - '-eNc'
+      - '-ec '
+  selection_other:
+    CommandLine|contains:
+      - 'certutil -decode'
+      - 'certutil.exe -decode'
+      - 'expand %TEMP%'
+      - 'FromBase64String'
+  condition: selection_powershell or selection_other
+falsepositives:
+  - Automated deployment scripts using base64 encoded payloads
+level: high
+fields:
+  - Image
+  - CommandLine
+  - ParentImage

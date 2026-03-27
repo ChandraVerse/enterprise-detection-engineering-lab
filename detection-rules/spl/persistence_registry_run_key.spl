@@ -1,0 +1,10 @@
+| Comment: Registry Run Key Persistence | T1547.001 | Author: Chandra Sekhar Chakraborty
+
+index=windows source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=13
+(TargetObject="*\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run*"
+ OR TargetObject="*\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce*"
+ OR TargetObject="*\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run*"
+ OR TargetObject="*\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon*")
+NOT Image IN ("*\\MsMpEng.exe", "*\\msiexec.exe", "*\\OneDriveSetup.exe")
+| table _time, ComputerName, User, Image, TargetObject, Details
+| sort -_time

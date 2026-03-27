@@ -1,0 +1,10 @@
+| Comment: PsExec Lateral Movement | T1021.002 | Author: Chandra Sekhar Chakraborty
+
+(index=windows source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+ (Image="*PSEXESVC*" OR CommandLine="*psexec*"))
+OR
+(index=windows source="WinEventLog:System" EventCode=7045
+ ServiceName="PSEXESVC")
+| eval technique="T1021.002 - Remote Services: SMB/Windows Admin Shares"
+| table _time, ComputerName, User, CommandLine, ServiceName, technique
+| sort -_time

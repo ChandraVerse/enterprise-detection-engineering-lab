@@ -1,0 +1,15 @@
+| Comment: LOLBAS Certutil Abuse | T1218 | Author: Chandra Sekhar Chakraborty
+
+index=windows source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+Image="*\\certutil.exe"
+(CommandLine="*-urlcache*" OR CommandLine="*-verifyctl*"
+ OR CommandLine="*-decode*" OR CommandLine="*-decodehex*"
+ OR CommandLine="*http://*" OR CommandLine="*https://*" OR CommandLine="*ftp://*")
+| eval abuse_type=case(
+    match(CommandLine, "http|https|ftp"), "File Download",
+    match(CommandLine, "-decode"), "Decode Operation",
+    match(CommandLine, "-urlcache"), "URL Cache Abuse",
+    true(), "Unknown"
+  )
+| table _time, ComputerName, User, CommandLine, abuse_type, ParentImage
+| sort -_time

@@ -1,0 +1,9 @@
+| Comment: WMI Spawning Suspicious Child Process | T1047 | Author: Chandra Sekhar Chakraborty
+
+index=windows source="WinEventLog:Microsoft-Windows-Sysmon/Operational" EventCode=1
+(ParentImage="*\\wmiprvse.exe" OR ParentImage="*\\WmiPrvSE.exe")
+(Image="*\\cmd.exe" OR Image="*\\powershell.exe" OR Image="*\\cscript.exe"
+ OR Image="*\\wscript.exe" OR Image="*\\mshta.exe" OR Image="*\\regsvr32.exe"
+ OR Image="*\\rundll32.exe")
+| table _time, ComputerName, User, ParentImage, Image, CommandLine
+| sort -_time

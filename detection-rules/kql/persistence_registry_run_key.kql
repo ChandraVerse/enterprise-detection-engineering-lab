@@ -1,0 +1,15 @@
+// Rule: Registry Run Key Persistence Modification
+// Tactic: Persistence | Technique: T1547.001
+// Author: Chandra Sekhar Chakraborty
+
+registry where event.type in ("creation", "change") and
+  registry.path like~ (
+    "*\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run\\*",
+    "*\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce\\*",
+    "*\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run\\*",
+    "*\\SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon\\*"
+  ) and
+  not process.executable in (
+    "C:\\Program Files\\Windows Defender\\MsMpEng.exe",
+    "C:\\Windows\\System32\\msiexec.exe"
+  )

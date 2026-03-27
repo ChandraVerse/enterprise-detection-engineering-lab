@@ -1,0 +1,11 @@
+// Rule: Account Discovery via Net User Commands
+// Tactic: Discovery | Technique: T1087.001, T1069
+// Author: Chandra Sekhar Chakraborty
+
+process where event.type == "start" and
+  process.name in ("net.exe", "net1.exe") and
+  process.command_line like~ (
+    "*user*", "*group*", "*localgroup*", "*accounts*"
+  )
+| stats count() by process.command_line, user.name, host.name
+| where count() >= 3

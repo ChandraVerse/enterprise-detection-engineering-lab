@@ -1,0 +1,10 @@
+| Comment: Pass-the-Hash via NTLM | T1550.002 | Author: Chandra Sekhar Chakraborty
+
+index=windows source="WinEventLog:Security" EventCode=4624
+Logon_Type=3 Authentication_Package=NTLM Workstation_Name="-"
+NOT Subject_Account_Name="ANONYMOUS LOGON"
+| stats count by src_ip, Account_Name, Workstation_Name, host
+| where count >= 2
+| eval risk_score=if(count >= 5, "critical", if(count >= 3, "high", "medium"))
+| table _time, src_ip, Account_Name, host, count, risk_score
+| sort -count

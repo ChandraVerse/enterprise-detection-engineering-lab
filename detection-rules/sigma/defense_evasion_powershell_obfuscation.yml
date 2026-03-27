@@ -1,0 +1,50 @@
+title: PowerShell Obfuscated Script Execution
+id: b7d3e2a1-4f8c-4e9b-9c1d-2a7f5b3d8e4c
+status: production
+description: |
+  Detects execution of obfuscated PowerShell commands using common obfuscation
+  indicators such as character replacement, base64 encoding, string concatenation,
+  and invoke-expression variations used to bypass security controls.
+references:
+  - https://attack.mitre.org/techniques/T1027/010/
+  - https://github.com/danielbohannon/Invoke-Obfuscation
+author: Chandra Sekhar Chakraborty
+date: 2025/11/05
+modified: 2026/01/15
+tags:
+  - attack.defense_evasion
+  - attack.t1027.010
+  - attack.t1059.001
+logsource:
+  product: windows
+  category: process_creation
+detection:
+  selection_powershell:
+    Image|endswith:
+      - '\powershell.exe'
+      - '\pwsh.exe'
+  selection_obfuscation:
+    CommandLine|contains:
+      - '-EncodedCommand'
+      - '-enc '
+      - 'invoke-expression'
+      - 'iex('
+      - 'IEX ('
+      - '[char]'
+      - 'FromBase64String'
+      - '-Join'
+      - 'String]::Join'
+  filter_legitimate:
+    CommandLine|contains:
+      - 'WindowsUpdate'
+      - 'PSWindowsUpdate'
+  condition: selection_powershell and selection_obfuscation and not filter_legitimate
+falsepositives:
+  - Legitimate administrative PowerShell scripts using base64
+  - Software deployment tools (SCCM, PDQ Deploy)
+level: high
+fields:
+  - Image
+  - CommandLine
+  - ParentImage
+  - User
