@@ -1,0 +1,116 @@
+<!--
+  Sysmon Configuration for Enterprise Detection Engineering Lab
+  Author: Chandra Sekhar Chakraborty
+  Base: SwiftOnSecurity/sysmon-config (modified for detection engineering)
+  Deploy: sysmon64.exe -accepteula -i sysmon_config.xml
+  Update: sysmon64.exe -c sysmon_config.xml
+-->
+<Sysmon schemaversion="4.90">
+  <HashAlgorithms>MD5,SHA256,IMPHASH</HashAlgorithms>
+  <CheckRevocation/>
+  <EventFiltering>
+
+    <!-- ─── Process Creation (ID 1) ─── -->
+    <RuleGroup name="ProcessCreate" groupRelation="or">
+      <ProcessCreate onmatch="exclude">
+        <Image condition="is">C:\Windows\system32\conhost.exe</Image>
+        <ParentImage condition="is">C:\Windows\system32\wermgr.exe</ParentImage>
+      </ProcessCreate>
+    </RuleGroup>
+
+    <!-- ─── Network Connections (ID 3) ─── -->
+    <RuleGroup name="NetworkConnect" groupRelation="or">
+      <NetworkConnect onmatch="include">
+        <Image condition="end with">powershell.exe</Image>
+        <Image condition="end with">cmd.exe</Image>
+        <Image condition="end with">certutil.exe</Image>
+        <Image condition="end with">bitsadmin.exe</Image>
+        <Image condition="end with">mshta.exe</Image>
+        <Image condition="end with">wscript.exe</Image>
+        <Image condition="end with">cscript.exe</Image>
+        <Image condition="end with">regsvr32.exe</Image>
+        <Image condition="end with">rundll32.exe</Image>
+        <DestinationPort condition="is">4444</DestinationPort>
+        <DestinationPort condition="is">1337</DestinationPort>
+        <DestinationPort condition="is">8443</DestinationPort>
+      </NetworkConnect>
+    </RuleGroup>
+
+    <!-- ─── Process Termination (ID 5) ─── -->
+    <RuleGroup name="ProcessTerminate" groupRelation="or">
+      <ProcessTerminate onmatch="exclude">
+        <Image condition="begin with">C:\Windows\</Image>
+      </ProcessTerminate>
+    </RuleGroup>
+
+    <!-- ─── Driver Load (ID 6) ─── -->
+    <RuleGroup name="DriverLoad" groupRelation="or">
+      <DriverLoad onmatch="exclude">
+        <Signature condition="contains">Microsoft</Signature>
+        <Signature condition="contains">Windows</Signature>
+      </DriverLoad>
+    </RuleGroup>
+
+    <!-- ─── Image Load (ID 7) ─── -->
+    <RuleGroup name="ImageLoad" groupRelation="or">
+      <ImageLoad onmatch="include">
+        <ImageLoaded condition="contains">mimikatz</ImageLoaded>
+        <ImageLoaded condition="contains">mimilib</ImageLoaded>
+        <Signed condition="is">false</Signed>
+      </ImageLoad>
+    </RuleGroup>
+
+    <!-- ─── Process Access (ID 10) ─── Critical for LSASS monitoring -->
+    <RuleGroup name="ProcessAccess" groupRelation="or">
+      <ProcessAccess onmatch="include">
+        <TargetImage condition="end with">lsass.exe</TargetImage>
+        <GrantedAccess condition="is">0x1010</GrantedAccess>
+        <GrantedAccess condition="is">0x1410</GrantedAccess>
+        <GrantedAccess condition="is">0x147a</GrantedAccess>
+        <GrantedAccess condition="is">0x1418</GrantedAccess>
+        <GrantedAccess condition="is">0x1fffff</GrantedAccess>
+      </ProcessAccess>
+    </RuleGroup>
+
+    <!-- ─── File Creation (ID 11) ─── -->
+    <RuleGroup name="FileCreate" groupRelation="or">
+      <FileCreate onmatch="include">
+        <TargetFilename condition="contains">\AppData\Roaming\</TargetFilename>
+        <TargetFilename condition="contains">\AppData\Local\Temp\</TargetFilename>
+        <TargetFilename condition="end with">.ps1</TargetFilename>
+        <TargetFilename condition="end with">.vbs</TargetFilename>
+        <TargetFilename condition="end with">.bat</TargetFilename>
+        <TargetFilename condition="end with">.hta</TargetFilename>
+      </FileCreate>
+    </RuleGroup>
+
+    <!-- ─── Registry Events (ID 12, 13, 14) ─── -->
+    <RuleGroup name="RegistryEvent" groupRelation="or">
+      <RegistryEvent onmatch="include">
+        <TargetObject condition="contains">CurrentVersion\Run</TargetObject>
+        <TargetObject condition="contains">CurrentVersion\RunOnce</TargetObject>
+        <TargetObject condition="contains">Winlogon\Userinit</TargetObject>
+        <TargetObject condition="contains">Winlogon\Shell</TargetObject>
+        <TargetObject condition="contains">\Services\</TargetObject>
+      </RegistryEvent>
+    </RuleGroup>
+
+    <!-- ─── Pipe Events (ID 17, 18) ─── -->
+    <RuleGroup name="PipeEvent" groupRelation="or">
+      <PipeEvent onmatch="include">
+        <PipeName condition="contains">PSEXESVC</PipeName>
+        <PipeName condition="contains">mojo.</PipeName>
+        <PipeName condition="contains">msagent_</PipeName>
+      </PipeEvent>
+    </RuleGroup>
+
+    <!-- ─── DNS Query (ID 22) ─── -->
+    <RuleGroup name="DnsQuery" groupRelation="or">
+      <DnsQuery onmatch="exclude">
+        <QueryName condition="end with">.microsoft.com</QueryName>
+        <QueryName condition="end with">.windowsupdate.com</QueryName>
+      </DnsQuery>
+    </RuleGroup>
+
+  </EventFiltering>
+</Sysmon>
