@@ -9,6 +9,23 @@
 
 > A production-grade Elastic SIEM detection engineering lab featuring Sysmon telemetry, 10+ Sigma rules converted to KQL and SPL, full MITRE ATT&CK v14 mapping, and adversary simulation via Atomic Red Team.
 
+
+---
+
+## Detection Screenshots
+
+### Elastic SIEM SOC Dashboard
+![Elastic SIEM SOC Dashboard](docs/screenshots/siem_dashboard_detection.png)
+*Kibana detection dashboard showing critical alerts for T1003.001 and T1027.010, MITRE ATT&CK heatmap, alert volume timeline, and threat intelligence feeds.*
+
+### LSASS Credential Dump — Real-Time Detection
+![LSASS Credential Dump Detection](docs/screenshots/lsass_credential_dump_detection.png)
+*Sysmon Event ID 10 firing as mimikatz.exe attempts LSASS memory access with GrantedAccess 0x1410 — detection rule intercepts and alerts in real time.*
+
+### Lateral Movement Attack Chain
+![Lateral Movement Attack Chain](docs/screenshots/lateral_movement_attack_chain.png)
+*Full adversary kill chain: phishing initial access → PsExec lateral movement (T1021.002) → Pass-the-Hash (T1550.002) targeting the Domain Controller — each step blocked by detection rules.*
+
 ---
 
 ## Table of Contents
