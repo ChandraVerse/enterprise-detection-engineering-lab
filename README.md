@@ -14,17 +14,19 @@
 
 ## Detection Screenshots
 
-### Elastic SIEM SOC Dashboard
-![Elastic SIEM SOC Dashboard](docs/screenshots/siem_dashboard_detection.png)
-*Kibana detection dashboard showing critical alerts for T1003.001 and T1027.010, MITRE ATT&CK heatmap, alert volume timeline, and threat intelligence feeds.*
+> Real detection output from the lab environment — Elastic SIEM, Sysmon Event Viewer, and Kibana Discover captured during a simulated adversary campaign on `lab.local`.
 
-### LSASS Credential Dump — Real-Time Detection
-![LSASS Credential Dump Detection](docs/screenshots/lsass_credential_dump_detection.png)
-*Sysmon Event ID 10 firing as mimikatz.exe attempts LSASS memory access with GrantedAccess 0x1410 — detection rule intercepts and alerts in real time.*
+### 1 · Elastic SIEM — Alerts Panel
+![Elastic SIEM Alerts Panel](docs/screenshots/screenshot1_elastic_alerts.png)
+*Elastic Security Detections panel showing all 12 alerts fired during the lab session. Includes 4 Critical alerts (Mimikatz LSASS Dump × 2, Pass-the-Hash, PsExec), expanded row detail for T1003.001 with `SourceImage: mimikatz.exe`, `GrantedAccess: 0x1410`, and SHA256 hash. Alerts span DC01 and WRK01 across Credential Access, Lateral Movement, Execution, and Persistence tactics.*
 
-### Lateral Movement Attack Chain
-![Lateral Movement Attack Chain](docs/screenshots/lateral_movement_attack_chain.png)
-*Full adversary kill chain: phishing initial access → PsExec lateral movement (T1021.002) → Pass-the-Hash (T1550.002) targeting the Domain Controller — each step blocked by detection rules.*
+### 2 · Windows Event Viewer — Sysmon Event ID 10
+![Sysmon Event ID 10 - LSASS Memory Access](docs/screenshots/screenshot2_sysmon_event.png)
+*Raw Sysmon `Microsoft-Windows-Sysmon/Operational` log on DC01 showing Event ID 10 (ProcessAccess). Left: General tab with all event fields — `TargetImage: lsass.exe`, `SourceImage: mimikatz.exe`, `GrantedAccess: 0x1410`. Right: Full XML view with highlighted fields that triggered the detection rule. CallTrace confirms ntdll + KERNELBASE + mimikatz stack frames.*
+
+### 3 · Kibana Discover — KQL Query Results
+![Kibana Discover - Attack Session Events](docs/screenshots/screenshot3_kibana_discover.png)
+*Kibana Discover with KQL query hunting for Event ID 10 (LSASS access), WMI child process spawns, and PSEXESVC.exe creation. Histogram spike at 20:14–20:22 shows the adversary campaign window. Expanded row reveals `WmiPrvSE.exe → cmd.exe` spawn with full command line `cmd.exe /c whoami & ipconfig /all & net user /domain`. Status bar confirms 47 events matched across a 21-minute attack campaign.*
 
 ---
 
