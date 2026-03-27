@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+venv/
+.venv/
+env/
+.env/
+
+# Environment / secrets
+.env
+.env.*
+*.env
+config.local.yml
+secrets.yml
+**/config.yml
+!lab-setup/elastic/config.yml.example
+
+# API keys — NEVER commit these
+api_keys.txt
+credentials.json
+*.key
+*.pem
+*.p12
+
+# Generated reports (contain sensitive incident data)
+automation/reports/*.pdf
+automation/reports/*.json
+!automation/reports/.gitkeep
+
+# Kibana exports with sensitive data
+dashboards/*.ndjson
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+*.log.*
+
+# Lab artifacts (binaries, memory dumps — never commit)
+*.exe
+*.dll
+*.dmp
+*.bin
+lab-setup/**/*.zip
+adversary-simulation/atomic-red-team/atomics/
